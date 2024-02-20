@@ -50,10 +50,10 @@ data class KLine(
 @Serializable
 data class Item(
     val k: Long,        // timestamp
-    val o: String,      // open
-    val c: String,      // close
-    val h: String,      // high
-    val l: String,      // low
+    val o: Double,      // open
+    val c: Double,      // close
+    val h: Double,      // high
+    val l: Double,      // low
     val v: Long,        // volume
     val t: Double,      // turnover
     val r: Double,      // turnover%

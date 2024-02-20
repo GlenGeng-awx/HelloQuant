@@ -4,17 +4,21 @@ import kotlinx.serialization.json.Json
 
 data class Stock(val stockName: String, val type: String) {
     private var kline: KLine? = null
+
     private var localMin: MutableList<Item>? = null
     private var localMax: MutableList<Item>? = null
 
-    private suspend fun loadKline() {
+    private var supportLevels: MutableList<SupportLevel>? = null
+    private var resistanceLevels: MutableList<ResistanceLevel>? = null
+
+    private fun loadKline() {
         val url = buildUrl(stockName, type)
         val headers = mapOf(
             "Futu-X-Csrf-Token" to getFutuToken(),
             "Quote-Token" to getQuoteToken(stockName, type)
         )
 
-        val response = callUrlWithHeaders(url, headers)
+        val response = runBlocking { callUrlWithHeaders(url, headers) }
         kline = Json.decodeFromString<Response>(response).data
     }
 
@@ -30,7 +34,7 @@ data class Stock(val stockName: String, val type: String) {
                 continue
             }
             if (list[i].l < list[i - 1].l && list[i].l < list[i + 1].l) {
-                println("calculateLocalMin hit ${secondToDate(list[i].k)}")
+//                println("calculateLocalMin hit ${secondToDate(list[i].k)}")
                 localMin!!.add(list[i])
             }
         }
@@ -48,20 +52,51 @@ data class Stock(val stockName: String, val type: String) {
                 continue
             }
             if (list[i].h > list[i - 1].h && list[i].h > list[i + 1].h) {
-                println("calculateLocalMax hit ${secondToDate(list[i].k)}")
+//                println("calculateLocalMax hit ${secondToDate(list[i].k)}")
                 localMax!!.add(list[i])
             }
         }
     }
 
-    fun test() {
-        runBlocking{
-            println("load kline")
-            loadKline()
-        }
+    private fun calculateSupportLevel() {
+        val sortedLocalMin = localMin!!.sortedBy { it.l }
+        supportLevels = mutableListOf()
 
-        print("cal min max")
-        calculateLocalMin("2024-01-01", "2024-05-01")
-        calculateLocalMax("2024-01-01")
+        var supportLevel = SupportLevel()
+        for (item in sortedLocalMin) {
+            if (!supportLevel.add(item)) {
+                supportLevels!!.add(supportLevel)
+                supportLevel = SupportLevel(mutableListOf(item))
+            }
+        }
+        supportLevels!!.add(supportLevel)
+
+        println("Support levels:${supportLevels!!.joinToString("\n")}")
+    }
+
+    private fun calculateResistanceLevel() {
+        val sortedLocalMax = localMax!!.sortedBy { it.h }
+        resistanceLevels = mutableListOf()
+
+        var resistanceLevel = ResistanceLevel()
+        for (item in sortedLocalMax) {
+            if (!resistanceLevel.add(item)) {
+                resistanceLevels!!.add(resistanceLevel)
+                resistanceLevel = ResistanceLevel(mutableListOf(item))
+            }
+        }
+        resistanceLevels!!.add(resistanceLevel)
+
+        println("Resistance levels:${resistanceLevels!!.joinToString("\n")}")
+    }
+
+    fun test() {
+        loadKline()
+
+        calculateLocalMin("2023-05-01", "2024-02-01")
+        calculateSupportLevel()
+
+        calculateLocalMax("2023-05-01", "2024-02-01")
+        calculateResistanceLevel()
     }
 }
