@@ -1,6 +1,6 @@
 class KLineStore(
-    private val fileStore: KLineFileStore,
-    private val futuStore: KLineFutuStore,
+    private val fileStore: KLineFileStore = KLineFileStore(),
+    private val futuStore: KLineFutuStore = KLineFutuStore(),
 ) {
 
     fun load(stockName: String, type: String): KLine {
@@ -13,4 +13,27 @@ class KLineStore(
         fileStore.store(stockName, type, kLine)
         return kLine
     }
+
+    fun loadAll() {
+        for (stockName in stockNames) {
+            for (type in types) {
+                load(stockName, type)
+            }
+        }
+    }
 }
+
+val stockNames = listOf(
+    "bili",
+    "tsla",
+    "coinbase",
+    "baba",
+    "bidu",
+    "mrna",
+    "edu",
+    "meta",
+    "pdd",
+    "rivn",
+)
+
+val types = listOf("day", "week", "month")

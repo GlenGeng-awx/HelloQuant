@@ -28,26 +28,27 @@ class KLineFutuStore {
             "edu" -> "201034"
             "meta" -> "82252918909550"
             "pdd" -> "76141180439059"
+            "rivn" -> "81179177086489"
             else -> TODO()
         }
     }
 
     private fun getMarketCode(stockName: String): String {
         return when (stockName.lowercase()) {
-            "bili", "tsla", "coinbase", "bidu", "mrna", "meta", "pdd" -> "11"
-            "baba", "edu" -> "10"
+            "bili", "tsla", "coinbase", "bidu", "mrna", "meta", "pdd", "rivn" -> "11" // nasdaq
+            "baba", "edu" -> "10" // nyse
             else -> TODO()
         }
     }
 
     private fun buildUrl(stockName: String, type: String): String {
         return """
-        https://www.futunn.com/quote-api/quote-v2/get-kline?stockId=${getStockId(stockName)}
-        &marketType=2
-        &type=${getTypeId(type)}
-        &marketCode=${getMarketCode(stockName)}
-        &instrumentType=3
-    """.trimIndent()
+            https://www.futunn.com/quote-api/quote-v2/get-kline?stockId=${getStockId(stockName)}
+            &marketType=2
+            &type=${getTypeId(type)}
+            &marketCode=${getMarketCode(stockName)}
+            &instrumentType=3
+            """.trimIndent()
     }
 
     private fun getQuoteToken(stockName: String, type: String): String {
@@ -87,6 +88,10 @@ class KLineFutuStore {
             "pdd" to "day" -> "39ebf8c60f"
             "pdd" to "week" -> "d4b0b97e92"
             "pdd" to "month" -> "98fa60d856"
+
+            "rivn" to "day" -> "ebf05ad4df"
+            "rivn" to "week" -> "1dece6f245"
+            "rivn" to "month" -> "6e71e571ac"
 
             else -> TODO()
         }
