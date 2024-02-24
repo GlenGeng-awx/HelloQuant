@@ -1,4 +1,5 @@
 
 fun main() {
-    SupportResistanceLevel().runAll()
+    Strategy().run("mrna", "day")
+
 }

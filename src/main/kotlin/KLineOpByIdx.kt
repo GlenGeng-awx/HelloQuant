@@ -1,4 +1,4 @@
-data class KLineOps(val kLine: KLine) {
+data class KLineOpByIdx(val kLine: KLine) {
 
     // idx is lowest in [idx - range1, idx + range2]
     fun lowestIn(idx: Int, range1: Int, range2: Int): Boolean {
@@ -55,7 +55,7 @@ data class KLineOps(val kLine: KLine) {
     }
 
     // Achieve a higher price every day for [idx + 1, idx + range]
-    fun higherPriceEveryDay(idx: Int, range: Int): Boolean {
+    fun consecutiveHigherPrice(idx: Int, range: Int): Boolean {
         if (idx + range >= kLine.list.size) {
             return false
         }
@@ -64,7 +64,7 @@ data class KLineOps(val kLine: KLine) {
     }
 
     // Achieve a lower price every day for [idx + 1, idx + range]
-    fun lowerPriceEveryDay(idx: Int, range: Int): Boolean {
+    fun consecutiveLowerPrice(idx: Int, range: Int): Boolean {
         if (idx + range >= kLine.list.size) {
             return false
         }
@@ -73,7 +73,7 @@ data class KLineOps(val kLine: KLine) {
     }
 
     // Achieve a higher volume every day for [idx + 1, idx + range]
-    fun higherVolumeEveryDay(idx: Int, range: Int): Boolean {
+    fun consecutiveHigherVolume(idx: Int, range: Int): Boolean {
         if (idx + range >= kLine.list.size) {
             return false
         }
@@ -82,19 +82,11 @@ data class KLineOps(val kLine: KLine) {
     }
 
     // Achieve a lower volume every day for [idx + 1, idx + range]
-    fun lowerVolumeEveryDay(idx: Int, range: Int): Boolean {
+    fun consecutiveLowerVolume(idx: Int, range: Int): Boolean {
         if (idx + range >= kLine.list.size) {
             return false
         }
 
         return (idx + 1..idx + range).all { kLine.list[it].v < kLine.list[it - 1].v }
-    }
-
-    // from and to is in the format of "yyyy-MM-dd"
-    fun filterByDateRange(idx: Int, from: String?, to: String?): Boolean {
-        val fromSecond = from?.let { dateToSecond(it) } ?: 0
-        val toSecond = to?.let { dateToSecond(it) } ?: Long.MAX_VALUE
-
-        return kLine.list[idx].k in fromSecond..toSecond
     }
 }

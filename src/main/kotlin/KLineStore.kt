@@ -13,14 +13,6 @@ class KLineStore(
         fileStore.store(stockName, type, kLine)
         return kLine
     }
-
-    fun loadAll() {
-        for (stockName in stockNames) {
-            for (type in types) {
-                load(stockName, type)
-            }
-        }
-    }
 }
 
 val stockNames = listOf(
