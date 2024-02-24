@@ -26,6 +26,9 @@ val stockNames = listOf(
     "meta",
     "pdd",
     "rivn",
+    "zoom",
+    "snap",
+    "snow",
 )
 
 val types = listOf("day", "week", "month")

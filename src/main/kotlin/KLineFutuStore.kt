@@ -29,14 +29,17 @@ class KLineFutuStore {
             "meta" -> "82252918909550"
             "pdd" -> "76141180439059"
             "rivn" -> "81179177086489"
+            "zoom" -> "77283641740655"
+            "snap" -> "73929272278628"
+            "snow" -> "79512729758316"
             else -> TODO()
         }
     }
 
     private fun getMarketCode(stockName: String): String {
         return when (stockName.lowercase()) {
-            "bili", "tsla", "coinbase", "bidu", "mrna", "meta", "pdd", "rivn" -> "11" // nasdaq
-            "baba", "edu" -> "10" // nyse
+            "bili", "tsla", "coinbase", "bidu", "mrna", "meta", "pdd", "rivn", "zoom" -> "11" // nasdaq
+            "baba", "edu", "snap", "snow" -> "10" // nyse
             else -> TODO()
         }
     }
@@ -92,6 +95,18 @@ class KLineFutuStore {
             "rivn" to "day" -> "ebf05ad4df"
             "rivn" to "week" -> "1dece6f245"
             "rivn" to "month" -> "6e71e571ac"
+
+            "zoom" to "day" -> "2738fd1b9f"
+            "zoom" to "week" -> "006a97739c"
+            "zoom" to "month" -> "93b07ac80f"
+
+            "snap" to "day" -> "96db030807"
+            "snap" to "week" -> "3f223e2716"
+            "snap" to "month" -> "f9b8223eff"
+
+            "snow" to "day" -> "d7dddcd2ea"
+            "snow" to "week" -> "0e72a4facc"
+            "snow" to "month" -> "cc1f882335"
 
             else -> TODO()
         }
