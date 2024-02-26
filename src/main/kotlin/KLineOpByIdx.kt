@@ -18,6 +18,16 @@ data class KLineOpByIdx(val kLine: KLine) {
         return (idx - range1..idx + range2).all { kLine.list[it].h <= kLine.list[idx].h }
     }
 
+    // idx is the highest price in [idx - 30, idx + 10]
+    fun resistanceLevel(idx: Int): Boolean {
+        return KLineOpByIdx(kLine).highestIn(idx, 30, 10)
+    }
+
+    // idx is the lowest price in [idx - 30, idx + 10]
+    fun supportLevel(idx: Int): Boolean {
+        return KLineOpByIdx(kLine).lowestIn(idx, 30, 10)
+    }
+
     // low is fell to in [idx + 1, idx + range]
     fun fallTo(low: Double, idx: Int, range: Int): Boolean {
         if (idx + range >= kLine.list.size) {
