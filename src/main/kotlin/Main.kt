@@ -1,6 +1,6 @@
 
 fun main() {
-//    for (stockName in stockNames) {
-        SandBox("meta", "day", "2023-01-01", "2024-01-01").run()
-//    }
+    for (stockName in stockNames) {
+        SandBox(stockName, "day", "2023-12-01", "2024-12-01").run()
+    }
 }

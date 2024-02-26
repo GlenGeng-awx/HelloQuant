@@ -1,10 +1,3 @@
-/**
- * BottomFishingStrategy
- *
- * Trigger condition: Downward breakthrough of the previous support level, reaching 20% decline.
- * Purchase strategy: Purchase continuously for 10 consecutive days, with 1000 USD each day,
- *                    and hold for 20 days.
- */
 class SandBox(
     private val stockName: String,
     private val type: String,
@@ -16,18 +9,24 @@ class SandBox(
     private val buyStrategy: BuyStrategy = BuyStrategy(stockName, type, kLine)
     private val amountPerDay: Int = 10_000
 
-    private fun triggeredIndices(): MutableList<Int> {
-        val indices = mutableListOf<Int>()
+    private fun triggeredIndices(): List<Int> {
+        val indices = mutableMapOf<String, Int>()
         for (idx in 0..<kLine.list.size) {
             if (!KLineOpUtil(kLine).filterByDateRange(idx, fromDate, toDate)) {
                 continue
             }
 
-            if (triggerCondition.triggerUpTrend(idx)) {
-                indices.add(idx)
+            val i = triggerCondition.triggerBottomFishing(idx) ?: continue
+            val date = secondToDate(kLine.list[i].k)
+
+            if (!indices.containsKey(date)) {
+                indices[date] = idx
             }
         }
-        return indices
+        indices.forEach {
+            println("refDate: ${it.key}, triggerDate: ${secondToDate(kLine.list[it.value].k)}")
+        }
+        return indices.map { it.value }
     }
 
     private fun varifyAt(idx: Int) {
@@ -44,8 +43,9 @@ class SandBox(
 
     fun run() {
         val indices = triggeredIndices()
-        for (idx in indices) {
-            varifyAt(idx)
-        }
+
+//        for (idx in indices) {
+//            varifyAt(idx)
+//        }
     }
 }
