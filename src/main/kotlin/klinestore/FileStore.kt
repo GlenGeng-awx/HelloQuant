@@ -1,9 +1,13 @@
+package klinestore
+
+import KLine
+import currentDate
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
-class KLineFileStore {
+class FileStore {
     fun load(stockName: String, type: String): KLine? {
         val filePath = "./data/$stockName.$type.${currentDate()}"
         val file = File(filePath)

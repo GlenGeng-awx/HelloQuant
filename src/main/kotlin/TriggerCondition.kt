@@ -1,3 +1,5 @@
+import strategy.OpByIdx
+
 class TriggerCondition(
     private val stockName: String,
     private val type: String,
@@ -5,7 +7,7 @@ class TriggerCondition(
 ) {
     private fun getLastSupportLevel(idx: Int): Int? {
         for (i in idx - 1 downTo 0) {
-            if (KLineOpByIdx(kLine).supportLevel(i)) {
+            if (OpByIdx(kLine).supportLevel(i)) {
                 return i
             }
         }
@@ -14,7 +16,7 @@ class TriggerCondition(
 
     private fun getLastResistanceLevel(idx: Int): Int? {
         for (i in idx - 1 downTo 0) {
-            if (KLineOpByIdx(kLine).resistanceLevel(i)) {
+            if (OpByIdx(kLine).resistanceLevel(i)) {
                 return i
             }
         }

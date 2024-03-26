@@ -1,3 +1,6 @@
+package klinestore
+
+import KLine
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
@@ -7,7 +10,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-class KLineFutuStore {
+class FutuStore {
     private fun getTypeId(type: String): String {
         return when (type.lowercase()) {
             "day" -> "2"

@@ -1,3 +1,5 @@
+import klinestore.KLineStore
+
 class SandBox(
     private val stockName: String,
     private val type: String,
@@ -12,7 +14,7 @@ class SandBox(
     private fun triggeredIndices(): List<Int> {
         val indices = mutableMapOf<String, Int>()
         for (idx in 0..<kLine.list.size) {
-            if (!KLineOpUtil(kLine).filterByDateRange(idx, fromDate, toDate)) {
+            if (!filterByDateRange(kLine, idx, fromDate, toDate)) {
                 continue
             }
 

@@ -1,4 +1,8 @@
-data class KLineOpByIdx(val kLine: KLine) {
+package strategy
+
+import KLine
+
+data class OpByIdx(val kLine: KLine) {
 
     // idx is lowest in [idx - range1, idx + range2]
     fun lowestIn(idx: Int, range1: Int, range2: Int): Boolean {
@@ -20,12 +24,12 @@ data class KLineOpByIdx(val kLine: KLine) {
 
     // idx is the highest price in [idx - 30, idx + 10]
     fun resistanceLevel(idx: Int): Boolean {
-        return KLineOpByIdx(kLine).highestIn(idx, 30, 10)
+        return OpByIdx(kLine).highestIn(idx, 30, 10)
     }
 
     // idx is the lowest price in [idx - 30, idx + 10]
     fun supportLevel(idx: Int): Boolean {
-        return KLineOpByIdx(kLine).lowestIn(idx, 30, 10)
+        return OpByIdx(kLine).lowestIn(idx, 30, 10)
     }
 
     // low is fell to in [idx + 1, idx + range]
@@ -98,5 +102,33 @@ data class KLineOpByIdx(val kLine: KLine) {
         }
 
         return (idx + 1..idx + range).all { kLine.list[it].v < kLine.list[it - 1].v }
+    }
+
+    // return the lowest idx in [idx, idx + len]
+    fun lowestIn(idx: Int, range: Int): Int? {
+        if (idx + range >= kLine.list.size) {
+            return null
+        }
+        var minIdx = idx
+        for (i in idx + 1..idx + range) {
+            if (kLine.list[i].l < kLine.list[minIdx].l) {
+                minIdx = i
+            }
+        }
+        return minIdx
+    }
+
+    // return the highest idx in [idx, idx + len]
+    fun highestIn(idx: Int, range: Int): Int? {
+        if (idx + range >= kLine.list.size) {
+            return null
+        }
+        var maxIdx = idx
+        for (i in idx + 1..idx + range) {
+            if (kLine.list[i].h > kLine.list[maxIdx].h) {
+                maxIdx = i
+            }
+        }
+        return maxIdx
     }
 }
