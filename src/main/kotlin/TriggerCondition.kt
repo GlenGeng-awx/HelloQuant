@@ -1,5 +1,3 @@
-import strategy.OpByIdx
-
 class TriggerCondition(
     private val stockName: String,
     private val type: String,
