@@ -13,12 +13,12 @@ import kotlin.math.min
  * AF1 = 0.02
  *
  * if direction is down
- *   SAR0 = highest of 10 days before the start date
+ *   SAR0 = highest of 9 days before the start date
  *   AFn = min(0.2, AFn-1 + 0.02), if new low is made
  *   EPn-1 = min(low of n-1, EPn-2)
  *
  * if direction is up
- *   SAR0 = lowest of 10 days before the start date
+ *   SAR0 = lowest of 9 days before the start date
  *   AFn = min(0.2, AFn-1 + 0.02), if new high is made
  *   EPn-1 = max(high of n-1, EPn-2)
  */
@@ -58,7 +58,7 @@ fun calculateDownSAR(kLine: KLine, startIdx: Int, sar: MutableList<Double>): Int
     assert(startIdx == sar.size)
 
     // SAR0
-    val highestIdx = OpByIdx(kLine).highestIndexIn(startIdx - 10, 10)!!
+    val highestIdx = OpByIdx(kLine).highestIndexIn(startIdx - 9, 9)!!
     val sar0 = kLine.list[highestIdx].h
     sar.add(sar0)
 
@@ -84,6 +84,11 @@ fun calculateDownSAR(kLine: KLine, startIdx: Int, sar: MutableList<Double>): Int
         val currSAR = prevSAR + af * (ep - prevSAR)
 
         if (kLine.list[currIdx].h >= currSAR) {
+            println(
+                """
+                breaking down by high ${kLine.list[currIdx].h} at ${secondToDate(kLine.list[currIdx].k)}
+                currSAR:$currSAR, ep:$ep, prevSAR:$prevSAR, af:$af
+                """.trimIndent())
             return currIdx
         }
 
@@ -102,7 +107,7 @@ fun calculateUpSAR(kLine: KLine, startIdx: Int, sar: MutableList<Double>): Int {
     assert(startIdx == sar.size)
 
     // SAR0
-    val lowestIdx = OpByIdx(kLine).lowestIndexIn(startIdx - 10, 10)!!
+    val lowestIdx = OpByIdx(kLine).lowestIndexIn(startIdx - 9, 9)!!
     val sar0 = kLine.list[lowestIdx].l
     sar.add(sar0)
 
@@ -128,6 +133,11 @@ fun calculateUpSAR(kLine: KLine, startIdx: Int, sar: MutableList<Double>): Int {
         val currSAR = prevSAR + af * (ep - prevSAR)
 
         if (kLine.list[currIdx].l <= currSAR) {
+            println(
+                """
+                breaking up by low ${kLine.list[currIdx].l} at ${secondToDate(kLine.list[currIdx].k)}
+                currSAR:$currSAR, ep:$ep, prevSAR:$prevSAR, af:$af
+                """.trimIndent())
             return currIdx
         }
 
