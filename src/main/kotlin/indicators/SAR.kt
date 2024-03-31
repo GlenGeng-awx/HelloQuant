@@ -27,6 +27,9 @@ private val sarConfig = mapOf(
 //    Pair("tsla", "day") to Pair("2022-06-10", "down"),
 //    Pair("tsla", "day") to Pair("2022-04-25", "down")
     Pair("tsla", "day") to Pair("2022-03-01", "up")
+//    Pair("tsla", "day") to Pair("2022-12-07", "down")
+//    Pair("tsla", "day") to Pair("2024-01-02", "down")
+//    Pair("tsla", "day") to Pair("2024-02-07", "up")
 )
 
 fun calculateSAR(kLine: KLine, stockName: String, type: String) {
@@ -71,25 +74,33 @@ fun calculateDownSAR(kLine: KLine, startIdx: Int, sar: MutableList<Double>): Int
     var currIdx = startIdx + 1
 
     while (true) {
+        // SARn-1
         val prevSAR = sar.last()
 
-        // update AFn: not AF1 && new low is made
+        // AFn: not AF1 && new high is made
         if (currIdx != startIdx + 1 && kLine.list[currIdx - 1].l < ep) {
             af = min(0.2, af + 0.02)
         }
 
-        // update EPn-1
+        // EPn-1
         ep = min(kLine.list[currIdx - 1].l, ep)
 
-        val currSAR = prevSAR + af * (ep - prevSAR)
+        // SARn = SARn-1 + AFn * (EPn-1 - SARn-1)
+        var currSAR = prevSAR + af * (ep - prevSAR)
 
+        // check if breaking up
         if (kLine.list[currIdx].h >= currSAR) {
-            println(
-                """
-                breaking down by high ${kLine.list[currIdx].h} at ${secondToDate(kLine.list[currIdx].k)}
-                currSAR:$currSAR, ep:$ep, prevSAR:$prevSAR, af:$af
-                """.trimIndent())
+            println("--> breaking down at ${secondToDate(kLine.list[currIdx].k)} by high ${kLine.list[currIdx].h}, " +
+                    "currSAR:$currSAR, ep:$ep, prevSAR:$prevSAR, af:$af")
             return currIdx
+        }
+
+        // hack SARn
+        val alterSAR = max(kLine.list[currIdx - 1].h, kLine.list[currIdx - 2].h)
+
+        if (currSAR < alterSAR) {
+            println("----> down hack at ${secondToDate(kLine.list[currIdx].k)} $currSAR -> $alterSAR ")
+            currSAR = alterSAR
         }
 
         sar.add(currSAR)
@@ -120,25 +131,33 @@ fun calculateUpSAR(kLine: KLine, startIdx: Int, sar: MutableList<Double>): Int {
     var currIdx = startIdx + 1
 
     while (true) {
+        // SARn-1
         val prevSAR = sar.last()
 
-        // update AFn: not AF1 && new high is made
+        // AFn: not AF1 && new high is made
         if (currIdx != startIdx + 1 && kLine.list[currIdx - 1].h > ep) {
             af = min(0.2, af + 0.02)
         }
 
-        // update EPn-1
+        // EPn-1
         ep = max(kLine.list[currIdx - 1].h, ep)
 
-        val currSAR = prevSAR + af * (ep - prevSAR)
+        // SARn = SARn-1 + AFn * (EPn-1 - SARn-1)
+        var currSAR = prevSAR + af * (ep - prevSAR)
 
+        // check if breaking up
         if (kLine.list[currIdx].l <= currSAR) {
-            println(
-                """
-                breaking up by low ${kLine.list[currIdx].l} at ${secondToDate(kLine.list[currIdx].k)}
-                currSAR:$currSAR, ep:$ep, prevSAR:$prevSAR, af:$af
-                """.trimIndent())
+            println("--> breaking up at ${secondToDate(kLine.list[currIdx].k)} by low ${kLine.list[currIdx].l}, " +
+                    "currSAR:$currSAR, ep:$ep, prevSAR:$prevSAR, af:$af")
             return currIdx
+        }
+
+        // hack SARn
+        val alterSAR = min(kLine.list[currIdx - 1].l, kLine.list[currIdx - 2].l)
+
+        if (currSAR > alterSAR) {
+            println("----> up hack at ${secondToDate(kLine.list[currIdx].k)} $currSAR -> $alterSAR ")
+            currSAR = alterSAR
         }
 
         sar.add(currSAR)
