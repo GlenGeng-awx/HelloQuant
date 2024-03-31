@@ -13,12 +13,12 @@ import kotlin.math.min
  * AF1 = 0.02
  *
  * if direction is down
- *   SAR0 = highest of 9 days before the start date
+ *   SAR0 = highest of 10 days before the start date
  *   AFn = min(0.2, AFn-1 + 0.02), if new low is made
  *   EPn-1 = min(low of n-1, EPn-2)
  *
  * if direction is up
- *   SAR0 = lowest of 9 days before the start date
+ *   SAR0 = lowest of 10 days before the start date
  *   AFn = min(0.2, AFn-1 + 0.02), if new high is made
  *   EPn-1 = max(high of n-1, EPn-2)
  */
@@ -61,9 +61,20 @@ fun calculateDownSAR(kLine: KLine, startIdx: Int, sar: MutableList<Double>): Int
     assert(startIdx == sar.size)
 
     // SAR0
-    val highestIdx = OpByIdx(kLine).highestIndexIn(startIdx - 9, 9)!!
-    val sar0 = kLine.list[highestIdx].h
+    var sar0 = 0.0
+    for (idx in startIdx - 10..<startIdx) {
+        if (OpByIdx(kLine).isLocalMax(idx)) {
+            sar0 = max(sar0, kLine.list[idx].h)
+        }
+    }
     sar.add(sar0)
+
+    val highestIdx = OpByIdx(kLine).highestIndexIn(startIdx - 10, 10)!!
+    val sar0Hint = kLine.list[highestIdx].h
+
+    if (sar0 != sar0Hint) {
+        println("----> hack down sar0 at ${secondToDate(kLine.list[startIdx].k)} $sar0Hint -> $sar0 ")
+    }
 
     // EP0
     val ep0 = kLine.list[startIdx].l
@@ -118,9 +129,20 @@ fun calculateUpSAR(kLine: KLine, startIdx: Int, sar: MutableList<Double>): Int {
     assert(startIdx == sar.size)
 
     // SAR0
-    val lowestIdx = OpByIdx(kLine).lowestIndexIn(startIdx - 9, 9)!!
-    val sar0 = kLine.list[lowestIdx].l
+    var sar0 = Double.MAX_VALUE
+    for (idx in startIdx - 10..<startIdx) {
+        if (OpByIdx(kLine).isLocalMin(idx)) {
+            sar0 = min(sar0, kLine.list[idx].l)
+        }
+    }
     sar.add(sar0)
+
+    val lowestIdx = OpByIdx(kLine).lowestIndexIn(startIdx - 10, 10)!!
+    val sar0Hint = kLine.list[lowestIdx].l
+
+    if (sar0 != sar0Hint) {
+        println("----> hack up sar0 at ${secondToDate(kLine.list[startIdx].k)} $sar0Hint -> $sar0 ")
+    }
 
     // EP0
     val ep0 = kLine.list[startIdx].h

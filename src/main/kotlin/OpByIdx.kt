@@ -1,6 +1,6 @@
 data class OpByIdx(val kLine: KLine) {
     // idx is local max
-    private fun isLocalMax(idx: Int): Boolean {
+    fun isLocalMax(idx: Int): Boolean {
         if (idx == 0 || idx == kLine.list.size - 1) {
             return false
         }
@@ -9,7 +9,7 @@ data class OpByIdx(val kLine: KLine) {
     }
 
     // idx is local min
-    private fun isLocalMin(idx: Int): Boolean {
+    fun isLocalMin(idx: Int): Boolean {
         if (idx == 0 || idx == kLine.list.size - 1) {
             return false
         }
