@@ -7,8 +7,8 @@ fun main() {
 //        SandBox(stockName, "day", "2023-12-01", "2024-12-01").run()
 //    }
 //
-    val kLine = KLineStore().load("tsla", "day")
+    val kLine = KLineStore().load("bili", "day")
 
-    calculateSAR(kLine, "tsla", "day")
+    calculateSAR(kLine, "bili", "day")
 
 }
